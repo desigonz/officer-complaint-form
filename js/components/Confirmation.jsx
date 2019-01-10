@@ -5,7 +5,6 @@ class Confirmation extends React.Component {
   render() {
     return (
       <div>
-        <h2>Thank you!</h2>
         <div>
           <svg
             className="checkmark"
@@ -26,10 +25,20 @@ class Confirmation extends React.Component {
             />
           </svg>
         </div>
-        <span>
-          The form has been sucessfully submitted, you should receive a
-          reference number by email.
-        </span>
+        <h3>We have received your complaint</h3>
+        <h4>Your case number: {this.props.caseNumber}</h4>
+        <div>
+          Thank you for sharing your experience with us. Our job is to make sure
+          your complaint is investigated fairly, thoroughly, and transparently.
+          This helps to serve you better.
+        </div>
+        <div>
+          If you provided an email, you will recieve an email with a
+          confirmation number for your complaint. You can also{" "}
+          <a href="mailto:fake@email.address">email us</a> or call us at
+          512-974-9090 at any time with your confirmation number to find your
+          complaint in this process.
+        </div>
       </div>
     );
   }
