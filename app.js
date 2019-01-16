@@ -5,7 +5,6 @@ import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
 import { createHistory } from "history";
 
-import "us-forms-system/lib/css/styles.css";
 import "./css/overrides.scss";
 
 import route from "./js/routes.jsx";
