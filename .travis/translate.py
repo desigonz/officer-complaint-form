@@ -1,112 +1,101 @@
+#!/usr/bin/env python
+
 import json, os, sys
+
+translation_file = sys.argv[1]
+file_to_translate = sys.argv[2]
+language_code = sys.argv[3]
+translate_routes = "--routes" in sys.argv
+full_file_string = ""
+
+if(language_code == None or language_code == ""):
+    halt_translation("Translation code not provided, halting translation.")
+
+print("\n\n")
+print("> Translating")
+print("\t(Dictionary)\t\t\ttranslation_file = " + translation_file)
+print("\t(File to translate)\t\tfile_to_translate = " + file_to_translate)
+print("\n\n")
+
 #
-# This script is intended to search for keywords in english and translate to other languages.
-# Please be very careful when using certain keywords in the dicctionary, because this script
-# can search-replace code which will cause the form to break.
+# Helper functions
 #
 
-
-#   The envisioned use would be something like this:
-#       $ python .travis/translate.py  "./public/js/app.bundle.js"   "./local/es.json"
-#       
-
-translation_file = "app.bundle.js"
-json_file = "local/complaintDict.json"
-directory = os.path.dirname(os.path.abspath(__file__))
-
-
-
-#
-# A sample json file looks like this, but notice they are stored in the local directory
-#
-
-sample_dict = {
-    "language": "ru",   # The language code (it can be anything...)
-    "urlpath": "fiscalizacion-de-policia/queja",
-    "translations": {
-            # Translate routes
-            "police-oversight/complaint": "fiscalizacion-de-policia/queja",
-            "introduction":"introduccion",
-            "what-happened": "que-sucedio",
-            "share-evidence": "compartir-evidencia",
-            "officer-details": "detalles-oficial",
-            "witness-details": "detalles-testigos",
-            "about-you": "acerca-de-usted",
-            "review-and-submit": "revisar-y-enviar",
-            
-            # Translate SAFE Phrases (long phrases that can be easily differentiated from code)
-            # Long phrases should be translated first, short or single-word translations should be done last.
-
-            "Office of Police Oversight": "Oficina de la Fiscalizacion de la Policia",
-            "File a Complaint": "Envie una queja",
-
-            # Translate UNSAFE Phrases (words or keywords that could replace javascript code)
-            # For this cases, it is important to use the percentage character: '%' which stands for a double quote symbol in javascript
-            "%Remove%": "%Remover%",
-            "%Time %": "%Tiempo%",
-            "%True%": "%Si%",
-
-            # Patch Code (notice the use of '%' and commas)
-            # This will specifically find the code which specifies an array of strings
-            # which is contained in quotes and separated by a comma.
-            "%Sunday%,%Monday%,%Tuesday%,%Wednesday%,%Thursday%,%Friday%,%Saturday%":
-					"%Domingo%,%Lunes%,%Martes%,%Miercoles%,%Jueves%,%Viernes%,%Sabado%",
-
-            "<button>Edit</button>": "<button>Editar</button>",
-
-            # Short translations last please, and within '%' symbols to avoid code conflicts.
-            "%Abort%": "%Abortar%",
-            "%Retry%": "%Re-Intentar%",
-            "%Cancel%": "%Cancelar%",
-            "%Undo%": "%Deshacer%",
-            "%Upload%": "%Enviar%",
-            "%Edit%": "%Editar%"
-
-    }
-}
-
-
-
-
+def file_exists(file_path):
+	return os.path.exists(file_path)
 
 def filter_string(inputstr):
 	return inputstr.replace("%", "\"")
 
+def load_json(file_path):
+    try:
+        with open(translation_file) as json_file:
+            return json.load(json_file)
+    except Exception as e:
+        print("Could not load json file '" + file_path + "': " + str(e))
+        return None
+
+def halt_translation(message):
+    print("\n\n\n---- HALTING TRANSLATION -----")
+    print("Message: " + message)
+    print("------------------------------\n\n\n")
+    sys.exit(1) # Helpful to indicate Travis there has been a problem with the deployment
 
 
-with open(json_file) as json_file:
-	data = json.load(json_file)
-
-	for item in data:
-        language =  item['language']
-        urlpath =  item['urlpath']
-        translations = item['translations']
-        translation_public_dir = "public_" + language
-
-        try:
-            os.system("cp -r public " + translation_public_dir)
-        except Exception as e:
-            print("Could not copy 'public' directory." + str(e))
-            sys.exit(1) # Helpful to indicate Travis there has been a problem with the deployment
-
-        translation_file_lang =  translation_public_dir + "/js/" + translation_file
-        fullAppString = ""
-
-		print("language: " + language)
-		print("urlpath: " + urlpath)
-		print("translation_file_lang: " + translation_file_lang)
-
-		with open(translation_file_lang) as f:
-				fullAppString=f.read()
 
 
-		for phrase, translation in translations.items():
-			p = filter_string(phrase)
-			t = filter_string(translation)
 
-			print("{0} | Phrase: '{1}' = '{2}'".format(translation_file_lang, p, t))
-			fullAppString = fullAppString.replace(p, t)
-			
-			 
-		with open(translation_file_lang, "w") as f:
-			f.write(fullAppString)
+
+#
+# Loading Locale settings
+#
+settings = load_json("./locale/settings.json")
+routes = load_json("./locale/routes.json")
+translations = load_json(translation_file)
+
+#
+# Loads the entire file into memory, where it will be patched
+#
+try:
+    with open(file_to_translate) as f:
+        full_file_string=f.read()
+except Exception as e:
+    halt_translation("Problem opening file to translate '" + file_to_translate + "': " + str(e))
+
+#
+# Let's check a few requirements
+#
+if(full_file_string == None or full_file_string==""):
+    halt_translation("File to translate seems empty, stopping.")
+if(translations == None):
+    halt_translation("Translations file '" + translation_file + "' could not be loaded")
+if(routes == None):
+    halt_translation("Routes could not be loaded")
+if(settings == None):
+    halt_translation("Settings could not be loaded")
+
+
+phrases_dict = None
+
+if(translate_routes):
+    phrases_dict = translations["routes"].items()
+else:
+    phrases_dict = translations.items()
+
+for english_key, translations_available in phrases_dict:
+    p = filter_string(english_key) # filter the phrase characters
+    for language, translated_phrase in translations_available.items():
+        if(language == language_code):
+            t = filter_string(translated_phrase) # filter the translation
+            print("{0} | Phrase: '{1}' = '{2}'".format(language, p, t))
+            full_file_string = full_file_string.replace(p, t) # performs patch
+
+
+print("\n\nSaving translations to file: " + file_to_translate)
+with open(file_to_translate, "w") as f:
+    f.write(full_file_string)
+
+
+print("\n\n-")
+print("- TRANSLATION FINISHED")
+print("-\n\n")
