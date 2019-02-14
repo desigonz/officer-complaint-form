@@ -41,7 +41,11 @@ def halt_translation(message):
     print("------------------------------\n\n\n")
     sys.exit(1) # Helpful to indicate Travis there has been a problem with the deployment
 
+def key_length(key_str):
+    return len(key_str)
 
+def sort_dictionary(language_dict):
+    return sorted(language_dict, key=key_length, reverse=True)
 
 
 
@@ -80,16 +84,17 @@ phrases_dict = None
 if(translate_routes):
     phrases_dict = translations["routes"].items()
 else:
-    phrases_dict = translations.items()
+    # We need to sort the longest strings first...
+    phrases_dict = sort_dictionary(translations)
 
-for english_key, translations_available in phrases_dict:
-    p = filter_string(english_key) # filter the phrase characters
+for english_key in phrases_dict:
+    translations_available = translations[english_key]
+    p = filter_string(english_key) # phrase
     for language, translated_phrase in translations_available.items():
-        if(language == language_code):
-            t = filter_string(translated_phrase) # filter the translation
-            print("{0} | Phrase: '{1}' = '{2}'".format(language, p, t))
-            full_file_string = full_file_string.replace(p, t) # performs patch
-
+            if(language == language_code):
+                t = filter_string(translated_phrase) # filter the translation
+                print("{0} | Phrase: '{1}' = '{2}'".format(language, p, t))
+                full_file_string = full_file_string.replace(p, t) # performs patch
 
 print("\n\nSaving translations to file: " + file_to_translate)
 with open(file_to_translate, "w") as f:
