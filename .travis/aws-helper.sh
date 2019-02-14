@@ -292,10 +292,13 @@ function forms_build {
 
 function forms_translate {
   print_header "Translating Form"
-  forms_reset_cwd;
   
   for LANGUAGE in $(jq -r ".supported_languages[]" "./locale/settings.json");
   do
+    echo "Switching back to default directory";
+    forms_reset_cwd;
+    echo "Directory now: $PWD";
+
     echo "Current Language code: ${LANGUAGE}"; 
     ORIGIN_PATH="public"; 
     TRANSLATION_PATH="${ORIGIN_PATH}_${LANGUAGE}"; 
