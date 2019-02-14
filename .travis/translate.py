@@ -80,15 +80,18 @@ if(settings == None):
 
 
 phrases_dict = None
+translations_final = None
 
 if(translate_routes):
-    phrases_dict = translations["routes"].items()
+    phrases_dict = sort_dictionary(translations["routes"])
+    translations_final = translations["routes"]
 else:
-    # We need to sort the longest strings first...
     phrases_dict = sort_dictionary(translations)
+    translations_final = translations
+
 
 for english_key in phrases_dict:
-    translations_available = translations[english_key]
+    translations_available = translations_final[english_key]
     p = filter_string(english_key) # phrase
     for language, translated_phrase in translations_available.items():
             if(language == language_code):

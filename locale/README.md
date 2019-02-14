@@ -17,7 +17,7 @@ If you plan on making changes, I would suggest using these tools:
 
 
 
-# In Depth Descriptions
+# File Description
 
 The following are descriptions of each file and how they need to be used.
 
@@ -149,19 +149,19 @@ The translation script will iterate through each of the keys and the current lan
 
 
 
-#### The Rules
+# The Rules
 
-1. Long strings and paragraphs ALWAYS go first.
+1. Organize long strings and paragraphs, they should go first (see update below).
 
-2. Short finite strings, such as "Upload", or "Update" MUST BE LAST.
+2. Organize short finite strings, such as "Upload", or "Update" to be last (see update below).
 
 3. Code translations is allowed, as long as you know the exact string in the file `public/js/app.bundle.json`. For example, if you know that file contains a button witht this code `<button>Upload File Here</button>` you could write a rule: `"<button>Upload File Here</button>": { "es": "<button>Suba Archivo Aqui</button>" }`
 
 4. Use the percentage symbol `%` as much as possible.
 
-5. Always check your syntax.
+5. Always check your syntax with JsonLint.
 
-   
+**\*\*Update: the script automatically sorts the english keys longest first to shortest last; however, it is still good practice to arrange them in a way that makes sense to the human translaton.\*\*** 
 
 Why do short strings need to be last? Imagine you have a long paragraph you want to translate: `This is my great rainbow paragraph I need to translate first.` But you placed a short translation first for the word `rainbow` to `arcoiris` in spanish. So the translator will translate all text in the form, including the paragraph you want translated to `This is my great arcoiris paragraph I need to translate first` , then the script will try to find `This is my great rainbow paragraph I need to translate first` but it will not be able to find it and it will move on. This means the paragraph will not be translated, it will remain with the 'arcoiris' text.
 
@@ -195,6 +195,8 @@ And Arabic:
 ```
 
 ** Notice the last element for 'ar' does not need a comma at the end.
+
+
 
 # The recomended process
 

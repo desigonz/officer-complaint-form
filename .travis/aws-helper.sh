@@ -304,7 +304,8 @@ function forms_translate {
     TRANSLATION_PATH="${ORIGIN_PATH}_${LANGUAGE}"; 
 
     echo "Copying: ${ORIGIN_PATH} to ${TRANSLATION_PATH}"; 
-    cp -r "${ORIGIN_PATH}" "${TRANSLATION_PATH}";
+    echo "cp -r $ORIGIN_PATH $TRANSLATION_PATH;"
+    cp -r $ORIGIN_PATH $TRANSLATION_PATH;
 
     echo "First, let's translate the routes:"; 
     python3 "./.travis/translate.py" "./locale/routes.json" "./${TRANSLATION_PATH}/js/app.bundle.js" "${LANGUAGE}" --routes
