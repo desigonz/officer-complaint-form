@@ -1,10 +1,10 @@
 {
-  "You DO NOT have to give personal information in order to file a complaint.": {
+  "NO tiene que proveer su información personal para presentar una queja.": {
     "es": "Usted NO TIENE que proveer informacion personal para poder enviar una queja."
   },
 
   "By telling us about your experience, you help us better serve you and your community. Thank you.": {
-    "es": "Al decirnos de su experiencia, usted nos ayuda a servirle mejor a usted y a su comunidad. Gracias."
+    "es": "Al contarnos su experiencia, nos está ayudando a servirles mejor a usted y a su comunidad. Muchas gracias."
   },
 
   "Required information": {
@@ -171,11 +171,11 @@
   },
 
   "File a Complaint": {
-    "es": "Envie una queja"
+    "es": "Presente una queja"
   },
 
   "File a complaint": {
-    "es": "Enviar una queja"
+    "es": "Presente una queja"
   },
 
   "Patrol car or motorcycle": {
@@ -227,7 +227,7 @@
   },
 
   "Select an option": {
-    "es": "Seleccione una opcion"
+    "es": "Seleccione una opción"
   },
 
   "Phone number": {
@@ -446,7 +446,7 @@
   },
 
   "%Online%": {
-    "es": "%En-Linea%"
+    "es": "%En línea%"
   },
 
   ":%Name%": {
